@@ -1,0 +1,704 @@
+{% load staticfiles %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{display_name}}-戰力分析</title>
+<!--    匯入jQuery    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src ="http://d3js.org/d3.v3.min.js"></script>
+    <script src="{% static "js/jquery.mousewheel.min.js" %}"></script>
+    <!-- <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"> -->
+<link rel="stylesheet" type="text/css" href="{% static "css/style_userInform.css" %}"></style>
+</head>
+<body>
+<div class="container">
+    <div class="nav">
+        <ul>
+            <li style="background-color:#46dd46"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div class="p01">
+        <div id="title"><h1>{{display_name}}<h1></div>
+        <div id="infobg">
+            <div class="info" id="photo">
+                <img src="{{profile_url}}" height="200">
+            </div
+            ><div class="info" id="statics">
+                <p>粉絲數：{{follower_cnt}}<p>
+                <p>文章數：{{post_cnt}}<p>
+                <p>被推薦數：{{recommendation_count}}<p>
+            </div>
+        </div>
+        <div class="bubble" id="article-chart">
+            <span>文章數</span>
+        </div>
+        <div class="bubble" id="sentiment-chart">
+            <span>情緒分數</span>
+        </div>
+    </div>
+    <div class="p02">
+        <div class= "title">
+            <h1>標準化情緒分數 (Z-Score)</h1>           
+        </div>
+        <div class= "bar" id = "within"> 
+            <div>Within-Subjects Z-Score</div> 
+        </div>
+        <div class= "bar" id = "between">
+            <div>Between-Subjects Z-Score</div>          
+        </div>
+        <div id = "text">
+        </div>
+    </div>
+    <div class="p03">
+        <div id = "button">
+            <button type="button" class="button" id="type">餐廳類別</button>
+            <button type="button" class="button" id="region">地理區域</button>          
+        </div>
+        <div id = "message">
+            <table>
+                <tr>
+                    <td class="head" id="restype" colspan="2">餐廳種類</td>
+                </tr>
+                <tr>
+                    <td class="head" id="name" colspan="2">餐廳名稱</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid white;font-size: 16px" align="center">
+                        滿意
+                    </td>
+                    <td style="border: 1px solid white;font-size: 16px" align="center">
+                        嫌棄
+                    </td>
+                </tr>
+                <tr id="likeOrDislike" valign="top"><td style="border: 1px solid white;" id="like"></td><td style="border: 1px solid white;" id="dislike"></td></tr>
+            </table>
+        </div>
+    </div>
+    <div class="p04"><h1>Page 4</h1></div>
+    <div class="p05"><h1>Page 5</h1></div>
+</div>
+
+        <script type="text/javascript">
+        bubbleT();
+        function bubbleT(){
+            var data = {{blog_cnt_by_type|safe}};
+            // var data = {{active_region|safe}}   
+            var color = d3.scale.category20();
+            var svg_width = 450;
+            var svg_height = 420;
+            var dataobj = { children: data };
+            var pack = d3.layout.pack();
+            var pack = pack.padding(2).size([svg_width,svg_height]).sort(function(a,b) { b.value - a.value; });
+            var nodes = pack.nodes(dataobj)
+            var nodes = nodes.filter(function(it) { return it.parent; });
+            var svg = d3.select("#article-chart")
+                    .append("svg")
+                    .attr("width", svg_width)
+                    .attr("height", svg_height);
+           svg.selectAll("circle")                 // 建立 circle 的 Selection
+              .data(nodes)                         // 綁定 selection 與資料
+              .enter()                             // 對於任何沒被對應而落單的資料 ...
+              .append("circle")
+              .attr({
+                r : 0, // 用 r 當半徑
+                fill: '#fff',
+              })
+              .transition()
+              .delay(function(it, i) { return i * 100; })
+              .duration(1500)
+              .ease('bounce')                    // 新增一個 circle 標籤
+              .attr({
+                cx: function(it) { return it.x; }, // 用 x,y 當圓心
+                cy: function(it) { return it.y; },
+                r : function(it) { return it.r; }, // 用 r 當半徑
+                fill: function(it) { return color(it.label); },
+                'value': function(it) { return it.value; },
+                'label': function(it) { return it.label; },
+              });
+            svg.selectAll("text").data(nodes).enter()
+                .append("text")
+                .attr({
+                    "font-size":"0px",
+                })
+                .transition()
+                .duration(1500)
+                .delay(1000)
+                .attr({
+                  x: function(it) { return it.x; },
+                  y: function(it) { return it.y; },
+                  "font-size": function(it) { 
+                    return it.label.length > it.r/4.5 ? '0px' : it.r*0.25 + 'px';
+                    },
+                  "text-anchor": "middle",
+                  'value': function(it) { return it.value; },
+                  'label': function(it) { return it.label; },                       // 文字水平置中
+                }).text(function(it) { return it.label; }); // 設定文字為國名
+
+             d3.select("#article-chart")
+                .append("div")
+                .style({
+                        "position": "absolute",
+                        "z-index": "10",
+                        "visibility": "hidden",
+                        "text-align":"left",
+                        "line-height":"20px",
+                        "background":"#77A989",
+                        "color": "#ffffff"
+                    });
+
+                $('#article-chart circle,#article-chart text').mouseover(function (e) {
+                    $('#article-chart div').css('visibility','visible')
+                    .html('類型：'+$(this).attr('label')+'<br>數量/數值：'+$(this).attr('value'));
+                })
+                .mouseout(function (e) {
+                    $('#article-chart div').css('visibility','hidden');
+                })
+                .mousemove(function (e) {
+                    $('#article-chart div').css('left',(e.pageX+10)+'px').css('top',(e.pageY-10)+'px');
+                });
+        } 
+    </script>
+    <script type="text/javascript">
+        bubbleS();
+        function bubbleS(){
+            var data = {{sentiment_score|safe}};
+            // var data = {{active_region|safe}}   
+            var color = d3.scale.category20();
+            var svg_width = 450;
+            var svg_height = 420;
+            var dataobj = { children: data };
+            var pack = d3.layout.pack();
+            var pack = pack.padding(2).size([svg_width,svg_height]).sort(function(a,b) { b.value - a.value; });
+            var nodes = pack.nodes(dataobj)
+            var nodes = nodes.filter(function(it) { return it.parent; });
+            var svg = d3.select("#sentiment-chart")
+                    .append("svg")
+                    .attr("width", svg_width)
+                    .attr("height", svg_height);
+           svg.selectAll("circle")                 // 建立 circle 的 Selection
+              .data(nodes)                         // 綁定 selection 與資料
+              .enter()                             // 對於任何沒被對應而落單的資料 ...
+              .append("circle")
+              .attr({
+                r : 0, // 用 r 當半徑
+                fill: '#fff',
+              })
+              .transition()
+              .delay(function(it, i) { return i * 100; })
+              .duration(1500)
+              .ease('bounce')                    // 新增一個 circle 標籤
+              .attr({
+                cx: function(it) { return it.x; }, // 用 x,y 當圓心
+                cy: function(it) { return it.y; },
+                r : function(it) { return it.r; }, // 用 r 當半徑
+                fill: function(it) { return color(it.label); },
+                'value': function(it) { return it.value; },
+                'label': function(it) { return it.label; },
+              });
+            svg.selectAll("text").data(nodes).enter()
+                .append("text")
+                .attr({
+                    "font-size":"0px",
+                })
+                .transition()
+                .duration(1500)
+                .delay(1000)
+                .attr({
+                  x: function(it) { return it.x; },
+                  y: function(it) { return it.y; },
+                  "font-size": function(it) { 
+                    return it.label.length > it.r/4.5 ? '0px' : it.r*0.25 + 'px';
+                     },
+                  "text-anchor": "middle",
+                  'value': function(it) { return it.value; },
+                  'label': function(it) { return it.label; },                       // 文字水平置中
+                }).text(function(it) { return it.label; }); // 設定文字為國名
+
+             d3.select("#sentiment-chart")
+                .append("div")
+                .style({
+                        "position": "absolute",
+                        "z-index": "10",
+                        "visibility": "hidden",
+                        "text-align":"left",
+                        "line-height":"20px",
+                        "background":"#77A989",
+                        "color": "#ffffff"
+                    });
+
+                $('#sentiment-chart circle,#sentiment-chart text').mouseover(function (e) {
+                    $('#sentiment-chart div').css('visibility','visible')
+                    .html('類型：'+$(this).attr('label')+'<br>數量：'+$(this).attr('value'));
+                })
+                .mouseout(function (e) {
+                    $('#sentiment-chart div').css('visibility','hidden');
+                })
+                .mousemove(function (e) {
+                    $('#sentiment-chart div').css('left',(e.pageX+10)+'px').css('top',(e.pageY-10)+'px');
+                });
+        } 
+    </script>
+
+    <script type="text/javascript">
+        function withinBar(){
+                       //Set svg_width and svg_height
+            var color = d3.scale.category20();
+            var svg_width = 1000;
+            var svg_height = 250;
+            var bar_padding = 5;
+            var maxHeight = 100;
+            var dataset = {{within_zscore|safe}};
+            var maxValue = 0;
+            for (var i in dataset){
+                var score = dataset[i].value;
+                var pollar = score >= 0 ? 1 : -1;
+                maxValue = Math.abs(score) >=  maxValue ? Math.abs(score) : maxValue ;
+                dataset[i].pollar = pollar;
+            }
+            for (var i in dataset){
+                dataset[i].height = dataset[i].pollar * Math.abs(dataset[i].value) / maxValue * maxHeight;
+            }
+            //make SVG element
+            var svg = d3.select(".p02 #within")
+                        .append("svg")
+                        .attr("width", svg_width)
+                        .attr("height", svg_height);
+            //make rectangle
+            var path = svg.selectAll("rect")
+               .data(dataset)
+               .enter()
+               .append("rect")
+               .attr("x", function(d, i) {
+                    return i * (svg_width / dataset.length);
+               })
+               .attr("y", function(d) {
+                    return svg_height/2;
+               })
+                .attr("fill","#fff")
+               .transition()          
+               .delay(function(it, i) { return i * 100; })
+               .duration(1500)
+               .ease('bounce')
+               .attr("y", function(d) {
+                    return d.value >= 0 ? svg_height/2 - d.height : svg_height/2 ;
+               })
+               .attr({
+                    "width":svg_width / dataset.length - bar_padding,
+                    "height":function(d) {
+                                return Math.abs(d.height);
+                            },
+                    "value":function(d) {
+                                return d.value;
+                            },
+                })
+               .attr("fill", function(d) {
+                    return color(d.label);
+               })
+
+                d3.select(".p02 #within")
+                .append("div")
+                .attr("id","withinBar")
+                .style("position", "absolute")
+                .style("z-index", "10")
+                .style("visibility", "hidden")
+
+                $('.p02 #within rect').mouseover(function (e) {
+                    $('#withinBar').css('visibility','visible')
+                    .text($(this).attr('value'));
+                })
+                .mouseout(function (e) {
+                    $('#withinBar').css('visibility','hidden');
+                })
+                .mousemove(function (e) {
+                    $('#withinBar').css('left',(e.pageX+10)+'px').css('top',(e.pageY+10)+'px');
+                });
+
+            var svg2 = d3.select(".p02 #text")
+                        .append("svg")
+                        .attr("width", svg_width)
+                        .attr("height", 175);
+
+            svg2.selectAll("text").data(dataset).enter()
+            .append("text")
+            .attr({
+                "font-size":"0px",
+            })
+            .transition()
+            .duration(1500)
+            .delay(1000)
+            .attr({
+              x: function(d, i) {
+                    return (2*i+1)/2 * (svg_width / dataset.length);
+                },
+              y: 0,
+              "font-size": '14px',
+              // "alignment-baseline": "center",
+              "writing-mode":"tb",
+              'label': function(it) { return it.label; },                       // 文字水平置中
+            }).text(function(it) { return it.label; });
+        } 
+    </script>
+
+    <script type="text/javascript">
+        function betweenBar(){
+            //Set svg_width and svg_height
+            var color = d3.scale.category20();
+            var svg_width = 1000;
+            var svg_height = 250;
+            var maxHeight = 100;
+            var bar_padding = 5;
+            var maxValue = 0;
+            var dataset = {{between_zscore|safe}};
+            for (var i in dataset){
+                var score = dataset[i].value;
+                var pollar = score >= 0 ? 1 : -1;
+                maxValue = Math.abs(score) >=  maxValue ? Math.abs(score) : maxValue ;
+                dataset[i].pollar = pollar;
+            }
+            for (var i in dataset){
+                dataset[i].height = dataset[i].pollar * Math.abs(dataset[i].value) / maxValue * maxHeight;
+            }
+
+            //make SVG element
+            var svg = d3.select(".p02 #between")
+                        .append("svg")
+                        .attr("width", svg_width)
+                        .attr("height", svg_height);
+            //make rectangle
+            var path = svg.selectAll("rect")
+               .data(dataset)
+               .enter()
+               .append("rect")
+               .attr("x", function(d, i) {
+                    return i * (svg_width / dataset.length);
+               })
+               .attr("y", function(d) {
+                    return svg_height/2;
+               })
+                .attr("fill","#fff")
+               .transition()          
+               .delay(function(it, i) { return i * 100; })
+               .duration(1500)
+               .ease('bounce')
+               .attr("y", function(d) {
+                    return d.value >= 0 ? svg_height/2 - d.height : svg_height/2 ;
+               })
+               .attr({
+                    "width":svg_width / dataset.length - bar_padding,
+                    "height":function(d) {
+                                return Math.abs(d.height);
+                            },
+                    "value":function(d) {
+                                return d.value;
+                            },
+                })
+               .attr("fill", function(d) {
+                    return color(d.label);
+               })
+
+                d3.select(".p02 #between")
+                .append("div")
+                .attr("id","betweenBar")
+                .style("position", "absolute")
+                .style("z-index", "10")
+                .style("visibility", "hidden")
+
+                $('.p02 #between rect').mouseover(function (e) {
+                    $('#betweenBar').css('visibility','visible')
+                    .text($(this).attr('value'));
+                })
+                .mouseout(function (e) {
+                    $('#betweenBar').css('visibility','hidden');
+                })
+                .mousemove(function (e) {
+                    $('#betweenBar').css('left',(e.pageX+10)+'px').css('top',(e.pageY+10)+'px');
+                });
+        }
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            var num_li=$("li").length//偵測我們有幾個標點（圖片）
+            
+            //滾動滑鼠滾輪時，移動到上一頁、下一頁的效果
+            n=1
+            moving=0
+            $(window).mousewheel(function(e){
+                $("html,body").stop()
+                if(moving==0){
+                    moving=1
+                    if(e.deltaY==-1){
+                        if(n<num_li){
+                            n++
+                        }
+                    }else{
+                        if(n>1){
+                            n--
+                        }
+                    }
+                }
+                $("html,body").animate({"scrollTop":$(".p0"+n).offset().top},function(){moving=0})
+            })
+            
+            //根據捲軸的位置改變右方導覽列游標的顏色
+            $(window).scroll(function(){
+                 if($(window).scrollTop()>=$(".p01").offset().top && $(window).scrollTop()<$(".p02").offset().top){
+                        $('.p02 svg').remove();
+                        withinBar();
+                        betweenBar();
+                    $(".nav li").css("background-color","white")//除了被點擊到的游標，其他都恢復成原來的顏色
+                    $(".nav li:eq(0)").css("background-color","#46dd46")
+                }else if($(window).scrollTop()>=$(".p02").offset().top && $(window).scrollTop()<$(".p03").offset().top){
+                    $(".nav li").css("background-color","white")//除了被點擊到的游標，其他都恢復成原來的顏色
+                    $(".nav li:eq(1)").css("background-color","#46dd46")
+                }else if($(window).scrollTop()>=$(".p03").offset().top && $(window).scrollTop()<$(".p04").offset().top){
+                    $(".nav li").css("background-color","white")//除了被點擊到的游標，其他都恢復成原來的顏色
+                    $(".nav li:eq(2)").css("background-color","#46dd46")
+                }else if($(window).scrollTop()>=$(".p04").offset().top && $(window).scrollTop()<$(".p05").offset().top){
+                    $(".nav li").css("background-color","white")//除了被點擊到的游標，其他都恢復成原來的顏色
+                    $(".nav li:eq(3)").css("background-color","#46dd46")
+                }else if($(window).scrollTop()>=$(".p05").offset().top){
+                    $(".nav li").css("background-color","white")//除了被點擊到的游標，其他都恢復成原來的顏色
+                    $(".nav li:eq(4)").css("background-color","#46dd46")
+                }
+            })
+                     
+            //點選右方導覽列時會到指定圖片
+            for(i=0;i<=num_li;i++){
+                $(".nav li:eq("+i+")").click({id:i},function(e){
+                    $("html,body").stop()
+                    $(".nav li").css("background-color","white")//除了被點擊到的游標，其他都恢復成原來的顏色
+                    page=e.data.id+1
+                    if(page == 2) {
+                        $('.p02 svg').remove();
+                        withinBar();
+                        betweenBar();
+                    }
+                    $("html,body").animate({"scrollTop":$(".p0"+page).offset().top})
+                    $(".nav li:eq("+e.data.id+")").css("background-color","#46dd46")//被點擊到的游標變色，前面的selector用this也可以
+                    n=e.data.id+1
+                })
+            }
+            //一進入網頁時，將導覽列垂直置中計算導覽列置中的位置
+           center()
+            
+           //縮放網頁時，將導覽列垂直置中
+            $(window).resize(function(){
+                center()
+            })
+            
+            //計算導覽列垂直置中的高度
+            function center(){
+                pos=$(window).height()/2-$(".nav").height()/2
+                $(".nav").css("top",pos)
+            }
+            
+        })
+    </script>
+    <script type="text/javascript"> 
+        $('.button').click(function(event) {
+            $('.p03 svg').remove();
+            if($(this).attr('id') == 'type'){
+                draw(true);
+            }else{
+                draw(false);
+            }
+        });
+        function draw(option){
+            var switcher = option;
+            var raw_data = {{restaurant|safe}};
+            var clusters = [];
+            var temp = [];
+
+            for (var ele in raw_data){
+                raw_data[ele].info = raw_data[ele].value;
+                raw_data[ele].iscenter = false;
+                var t = switcher ? raw_data[ele].value.type : raw_data[ele].value.region;
+                if (temp.indexOf(t) < 0){
+                    temp.push(t);
+                    raw_data[ele].iscenter = true;
+                    clusters.push(raw_data[ele]);
+                }
+                raw_data[ele].cluster = temp.indexOf(t);
+            }
+
+            var width = 1000,
+                height = 800,
+                padding = 4, // separation between same-color nodes
+                clusterPadding = 20, // separation between different-color nodes
+                maxRadius = 20;
+            var n = raw_data.length;// total number of nodes
+            var m = {{food_type_length|safe}}; // number of distinct clusters
+            var color = d3.scale.category20()
+                .domain(d3.range(m));
+            for (var node in raw_data){
+                var r = raw_data[node].info.like.length + raw_data[node].info.dislike.length
+                var adj = n >= height ? width/n : height/n;
+                adj = adj <= 5 ? adj : 5; 
+                raw_data[node].radius =  adj * Math.log(Math.pow(r, 2));
+            };
+            var nodes = raw_data;
+
+            // Use the pack layout to initialize node positions.
+            d3.layout.pack()
+                .sort(null)
+                .size([width, height])
+                .children(function(d) { return d.values; })
+                .value(function(d) { return d.radius * d.radius; })
+                .nodes({values: d3.nest()
+                  .key(function(d) { return d.cluster; })
+                  .entries(nodes)});
+
+            var force = d3.layout.force()
+                .nodes(nodes)
+                .size([width, height])
+                .gravity(.02)
+                .charge(0)
+                .on("tick", tick)
+                .start();
+
+            var svg = d3.select(".p03").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            var node = svg.selectAll("circle")
+                .data(nodes)
+              .enter().append("circle")
+                .style({
+                        "fill":function(d) { return color(d.cluster); },
+                    })
+                .attr({
+                        "like":function(d) { return d.info.like;},
+                        "dislike":function(d) { return d.info.dislike;},
+                        "label":function(d) { return d.label;},
+                        "type":function(d) { return switcher ? d.info.type : d.info.region;},
+                }).call(force.drag);
+            var anchor = svg.selectAll("text").data(nodes).enter()
+                        .append("text")
+                        .attr({
+                            class: function(d) { return d.iscenter ? 'center' : 'anchorText'; },
+                            radius: function(d) { return d.radius; },
+                            cluster: function(d) { return d.cluster; },
+                            x: function(d) { return d.x; },
+                            y: function(d) { return d.y; },
+                            "font-size": function(d){ return d.iscenter ? '16px' : '0px';},
+                            "text-anchor": "middle",
+                        }).text(function(d){ return switcher ? d.info.type : d.info.region;});
+            $('.p02 .anchorText').remove();
+            node.transition()
+                .duration(750)
+                .delay(function(d, i) { return i * 5; })
+                .attrTween("r", function(d) {
+                  var i = d3.interpolate(0, d.radius);
+                  return function(t) { return d.radius = i(t); };
+                });
+
+            function tick(e) {
+              node
+                  .each(cluster(10 * e.alpha * e.alpha))
+                  .each(collide(.5))
+                  .attr("cx", function(d) { return d.x; })
+                  .attr("cy", function(d) { return d.y; });
+              anchor
+                  // .each(cluster(10 * e.alpha * e.alpha))
+                  .each(collide(.5))
+                  .attr("x", function(d) { return d.x; })
+                  .attr("y", function(d) { return d.y; });          
+            }
+
+            // Move d to be adjacent to the cluster node.
+            function cluster(alpha) {
+              return function(d) {
+                var cluster = clusters[d.cluster];
+                if (cluster === d) return;
+                var x = d.x - cluster.x,
+                    y = d.y - cluster.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = d.radius + cluster.radius;
+                if (l != r) {
+                  l = (l - r) / l * alpha;
+                  d.x -= x *= l;
+                  d.y -= y *= l;
+                  cluster.x += x;
+                  cluster.y += y;
+                }
+              };
+            }
+
+            // Resolves collisions between d and all other circles.
+            function collide(alpha) {
+              var quadtree = d3.geom.quadtree(nodes);
+              return function(d) {
+                var r = d.radius + maxRadius + Math.max(padding, clusterPadding),
+                    nx1 = d.x - r,
+                    nx2 = d.x + r,
+                    ny1 = d.y - r,
+                    ny2 = d.y + r;
+                quadtree.visit(function(quad, x1, y1, x2, y2) {
+                  if (quad.point && (quad.point !== d)) {
+                    var x = d.x - quad.point.x,
+                        y = d.y - quad.point.y,
+                        l = Math.sqrt(x * x + y * y),
+                        r = d.radius + quad.point.radius + (d.cluster === quad.point.cluster ? padding : clusterPadding);
+                    if (l < r) {
+                      l = (l - r) / l * alpha;
+                      d.x -= x *= l;
+                      d.y -= y *= l;
+                      quad.point.x += x;
+                      quad.point.y += y;
+                    }
+                  }
+                  return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+                });
+              };
+            }
+
+            // d3.select("#likeOrDislike")
+            // .append("td")
+            // .attr('id','like');
+            // d3.select("#likeOrDislike")
+            // .append("td")
+            // .attr('id','dislike');
+
+            $('.p03 circle,.p03 text').mouseover(function (e) {
+                $('#message').css('visibility','visible');
+                $('.p03 #restype').text($(this).attr('type'));
+                $('.p03 #name').text($(this).attr('label'));
+                $('.p03 #like')
+                .html(
+                    readline($(this).attr('like'))
+                    );
+                $('.p03 #dislike')
+                .html(
+                    readline($(this).attr('dislike'))
+                    );
+            })
+            .mouseout(function (e) {
+                $('.p03 #message').css('visibility','hidden');
+            });
+            // .mousemove(function (e) {
+            //     $('.p03 #like').css('left',(e.pageX-100)+'px').css('top',(e.pageY)+'px');
+            //     $('.p03 #dislike').css('left',(e.pageX+100)+'px').css('top',(e.pageY)+'px');
+            // });
+
+            function readline(food){
+                list = food.split(',');
+                result = '';
+                for (var x in list){
+                    var line = list[x]+'<br>';
+                    result += line;
+                }
+                return result;
+            }
+        }
+        
+    </script>
+
+
+</body>
+</html>

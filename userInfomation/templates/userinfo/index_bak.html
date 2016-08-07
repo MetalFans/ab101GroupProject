@@ -1,0 +1,333 @@
+{% load staticfiles %}
+<!--Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Model Profile Widget Flat Responsive Widget Template :: w3layouts</title>
+<!-- Custom Theme files -->
+<link href="{% static "css/style.css" %}" rel="stylesheet" type="text/css" media="all"/>
+<!-- for-mobile-apps -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<!-- //for-mobile-apps -->
+
+<!--Google Fonts-->
+<link href='//fonts.googleapis.com/css?family=Gudea:400,700' rel='stylesheet' type='text/css'>
+<script src ="http://d3js.org/d3.v3.min.js"></script>
+<script src ="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+</head>
+<body>
+<!--profile start here-->
+<h1>{{display_name}}</h1>
+<div class="profile">
+	<div class="wrap">
+		<div class="profile-main">
+			<div class="profile-pic wthree">
+				<div id="face">
+					<img src="{{profile_url}}" alt="">
+				</div>
+				<div id="word">
+					<p>
+						PR：{{page_rank}}
+						<br>
+						<br>
+					</p>
+					<p>
+						粉絲數：{{follower_cnt}}
+						<br>
+						<br>
+					</p>
+					<p>
+						文章數：{{post_cnt}}
+						<br>
+						<br>
+					</p>
+					<p>
+						受推薦數：{{recommendation_count}}
+					</p>			
+				</div>
+				<div id="region">
+				</div>
+			</div>
+			<div class="active">
+				<div id="article-chart">
+					<p>文章分佈</p>
+				</div>
+			</div>
+			<div class="active">
+				<div id="sentiment-chart">
+					<p>情緒分數</p>
+				</div>
+			</div>
+			<div class="active">
+				<div id="word-count">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--profile end here-->
+<!--copy rights end here-->
+<!--copyrights start here-->
+	<script type="text/javascript"> 
+		var data = {{formatted_region|safe}};
+		var color = d3.scale.category20();
+		var svg_width = 220;
+		var svg_height = 220;
+	    var dataobj = { children: data };
+	    var pack = d3.layout.pack();
+	    var pack = pack.padding(2).size([svg_width,svg_height]).sort(function(a,b) { b.value - a.value; });
+	    var nodes = pack.nodes(dataobj)
+	    var nodes = nodes.filter(function(it) { return it.parent; });
+	    var svg = d3.select("#region")
+				.append("svg")
+				.attr("width", svg_width)
+				.attr("height", svg_height);
+	   svg.selectAll("circle")                 // 建立 circle 的 Selection
+		  .data(nodes)                         // 綁定 selection 與資料
+		  .enter()                             // 對於任何沒被對應而落單的資料 ...
+		  .append("circle")
+		  .attr({
+		    r : 0, // 用 r 當半徑
+		    fill: '#fff',
+		  })
+		  .transition()
+		  .delay(function(it, i) { return i * 100; })
+		  .duration(1500)
+		  .ease('bounce')                    // 新增一個 circle 標籤
+		  .attr({
+		    cx: function(it) { return it.x; }, // 用 x,y 當圓心
+		    cy: function(it) { return it.y; },
+		    r : function(it) { return it.r; }, // 用 r 當半徑
+		    fill: function(it) { return color(it.label); },
+		    'value': function(it) { return it.value; },
+		  });
+		svg.selectAll("text").data(nodes).enter()
+		    .append("text")
+		    .attr({
+				"font-size":"0px",
+			})
+			.transition()
+		  	.duration(1500)
+		  	.delay(1000)
+		    .attr({
+		      x: function(it) { return it.x; },
+		      y: function(it) { return it.y; },
+		      "font-size": function(it) { return it.r*0.8 +'px'; },
+		      "text-anchor": "middle",
+		      'value': function(it) { return it.value; },                    // 文字水平置中
+		    }).text(function(it) { return it.label; }); // 設定文字為國名
+
+		 d3.select("#region")
+		    .append("div")
+		    .style("position", "absolute")
+		    .style("z-index", "10")
+		    .style("visibility", "hidden")
+
+			$('circle,text').mouseover(function (e) {
+				$('#region div').css('visibility','visible')
+				.text($(this).attr('value'));
+			})
+			.mouseout(function (e) {
+				$('#region div').css('visibility','hidden');
+			})
+			.mousemove(function (e) {
+				$('#region div').css('left',(e.pageX-200)+'px').css('top',(e.pageY-100)+'px');
+			});
+
+
+	</script>
+
+  	<script type="text/javascript">
+			//Set svg_width and svg_height
+			var color = d3.scale.category20();
+			var svg_width = 720;
+			var svg_height = 200;
+			var bar_padding = 5;
+			var dataset = [
+				{'name':'火鍋', 'score':Math.floor(Math.random()*50)},
+				{'name':'輕食', 'score':Math.floor(Math.random()*50)},
+				{'name':'日式', 'score':Math.floor(Math.random()*50)},
+				{'name':'韓式', 'score':Math.floor(Math.random()*50)},
+				{'name':'小吃', 'score':Math.floor(Math.random()*50)},
+				{'name':'甜點', 'score':Math.floor(Math.random()*50)},
+				{'name':'燒烤', 'score':Math.floor(Math.random()*50)},
+				{'name':'美式', 'score':Math.floor(Math.random()*50)},
+				{'name':'泰式', 'score':Math.floor(Math.random()*50)},
+			]
+			
+			//make SVG element
+			var svg = d3.select("#article-chart")
+						.append("svg")
+						.attr("width", svg_width)
+						.attr("height", svg_height);
+			//make rectangle
+			var path = svg.selectAll("rect")
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("x", function(d, i) {
+			   		return i * (svg_width / dataset.length);
+			   })
+			   .attr("y", function(d) {
+			   		return svg_height;
+			   })
+			   	.attr("fill","#fff")
+			   .transition()		  
+			   .delay(function(it, i) { return i * 100; })
+			   .duration(1500)
+			   .ease('bounce')
+			   .attr("y", function(d) {
+			   		return svg_height - (d.score * 4)-25;
+			   })
+			   .attr({
+			   		"width":svg_width / dataset.length - bar_padding,
+			   		"height":function(d) {
+			   					return d.score * 4;
+			   				},
+			   		"value":function(d) {
+			   					return d.score;
+			   				},
+				})
+			   .attr("fill", function(d) {
+					return color(d.name);
+			   })
+
+	   			d3.select("#article-chart")
+			    .append("div")
+			    .style("position", "absolute")
+			    .style("z-index", "10")
+			    .style("visibility", "hidden")
+
+				$('rect').mouseover(function (e) {
+					$('#article-chart div').css('visibility','visible')
+					.text($(this).attr('value'));
+				})
+				.mouseout(function (e) {
+					$('#article-chart div').css('visibility','hidden');
+				})
+				.mousemove(function (e) {
+					$('#article-chart div').css('left',(e.pageX+10)+'px').css('top',(e.pageY+10)+'px');
+				});
+
+			 svg.selectAll("text")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d.name;
+			   })
+			   .attr("text-anchor", "middle")
+			   .attr("x", function(d, i) {
+			   		return i * (svg_width / dataset.length) + (svg_width / dataset.length - bar_padding) / 2;
+			   })
+			   .attr("y", function(d) {
+			   		return svg_height-5;
+			   })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "20px")
+			   .attr("fill", "rgba(100,150,200,1)");
+
+			// svg.selectAll("text")
+			//    .data(dataset)
+			//    .enter()
+			//    .append("text")
+			//    .transition()		  
+			//    .delay(function(it, i) { return 500+ i * 100; })
+			//    .duration(1500)
+			//    .text(function(d) {
+			//    		return d.score;
+			//    })
+			//    .attr("text-anchor", "middle")
+			//    .attr("x", function(d, i) {
+			//    		return i * (svg_width / dataset.length) + (svg_width / dataset.length - bar_padding) / 2;
+			//    })
+			//    .attr("y", function(d) {
+			//    		return svg_height - (d.score * 4)-25;
+			//    })
+			//    .attr("font-family", "sans-serif")
+			//    .attr("font-size", "20px")
+			//    .attr("fill", "black");
+
+
+
+		</script>
+		<script type="text/javascript">
+			//Set svg_width and svg_height
+			var svg_width = 720;
+			var svg_height = 200;
+			var bar_padding = 5;
+			var dataset = [
+				{'name':'火鍋', 'score':Math.floor(Math.random()*50)},
+				{'name':'輕食', 'score':Math.floor(Math.random()*50)},
+				{'name':'日式', 'score':Math.floor(Math.random()*50)},
+				{'name':'韓式', 'score':Math.floor(Math.random()*50)},
+				{'name':'小吃', 'score':Math.floor(Math.random()*50)},
+				{'name':'甜點', 'score':Math.floor(Math.random()*50)},
+				{'name':'燒烤', 'score':Math.floor(Math.random()*50)},
+				{'name':'美式', 'score':Math.floor(Math.random()*50)},
+				{'name':'泰式', 'score':Math.floor(Math.random()*50)},
+			]
+			
+			//make SVG element
+			var svg = d3.select("#sentiment-chart")
+						.append("svg")
+						.attr("width", svg_width)
+						.attr("height", svg_height);
+
+			//make rectangle
+			n = dataset.length
+			svg.selectAll("rect")
+			   .data(dataset)
+			   .enter()
+			   .append("rect")
+			   .attr("x", function(d, i) {
+			   		return i * (svg_width / dataset.length);
+			   })
+			   .attr("y", function(d) {
+			   		return svg_height;
+			   })
+			   	.attr("fill","#fff")
+			   .transition()		  
+			   .delay(function(it, i) { 
+			   		return (n-i-1) * 100;
+			    })
+			   .duration(1500)
+			   .ease('bounce')
+			   .attr("y", function(d) {
+			   		return svg_height - (d.score * 4)-25;
+			   })
+			   .attr("width", svg_width / dataset.length - bar_padding)
+			   .attr("height", function(d) {
+			   		return d.score * 4;
+			   })
+			   .attr("fill", function(d) {
+					return color(d.name);
+			   });
+
+			 svg.selectAll("text")
+			   .data(dataset)
+			   .enter()
+			   .append("text")
+			   .text(function(d) {
+			   		return d.name;
+			   })
+			   .attr("text-anchor", "middle")
+			   .attr("x", function(d, i) {
+			   		return i * (svg_width / dataset.length) + (svg_width / dataset.length - bar_padding) / 2;
+			   })
+			   .attr("y", function(d) {
+			   		return svg_height-5;
+			   })
+			   .attr("font-family", "sans-serif")
+			   .attr("font-size", "20px")
+			   .attr("fill", "rgba(100,150,200,1)");
+		</script>
+
+</body>
+</html>

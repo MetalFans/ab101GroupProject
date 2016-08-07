@@ -1,0 +1,241 @@
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,
+code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,dl,dt,dd,ol,nav ul,nav li,
+fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,
+figcaption,footer,header,hgroup,menu,nav,output,ruby,
+section,summary,time,mark,audio,video{margin:0;padding:0;border:0;}
+article, aside, details, figcaption, figure,footer, header, hgroup, menu, nav, section {display: block;}
+/*ol,ul{list-style:none;margin:0px;padding:0px;}
+blockquote,q{quotes:none;}
+blockquote:before,blockquote:after,q:before,q:after{content:'';content:none;}
+table{border-collapse:collapse;border-spacing:0;}*/
+
+*{
+    padding:0;
+    margin:0;
+}
+body{
+    padding:0;
+    margin:0;
+    overflow: hidden;
+}
+
+img{
+    display: block;
+}
+
+
+/*    插入背景圖片    */
+.p01{
+    background: #0fa3b1;
+    background: #d9e5d6;
+    background: #f1f1f1; 
+    height:100vh;
+    text-align: center;
+}
+.p02{
+    /*background:#d9e5d6;*/
+    background: #f1f1f1;
+    height:100vh;
+    text-align: center;
+}
+.p03{
+    background: #f1f1f1;
+    height:100vh;
+    text-align: center;
+}
+.p04{  
+    height:100vh;
+}
+.p05{
+    height:100vh;
+}
+/*    插入導覽列     */
+.nav{
+    position: fixed;
+    top:50%;
+    right:0px;
+    cursor:pointer;
+}
+li{
+    width:10px;
+    height:10px; 
+    margin: 10px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.5) inset,-1px -1px 1px rgba(0,0,0,0.5) inset;
+    list-style-type: none;
+}
+p{
+    position: relative;
+    font-size:20px;
+    /*color:ghostwhite;*/
+    /*text-shadow:0px 0px 15px black;*/
+    /*margin: 20px; */
+}
+#title{
+    margin: 0px;
+    width: 100%;
+    height:100px;
+    line-height: 100px;
+    border-bottom: 1px #ccc solid;
+    color: #707070;
+    /*border: 1px solid red;*/
+}
+#infobg{
+    background: rgba(6,174,213,0.8);
+    background: #ef5555;
+    background: #85bc99;
+}
+.info{
+    vertical-align: middle;
+    display: inline-block;
+    width: 250px;
+    height:200px;
+    /*border: 1px solid red;*/
+}
+.info img{
+    width: 200px;
+    height: 200px;
+    border-radius: 5px;
+/*    border-left: 1px solid #086788;
+    border-right: 1px solid #086788;*/
+}
+#statics{
+    line-height: 65px;
+    text-align: center;
+    width: 250px;
+    height:200px;
+    color: #ffffff;
+}
+.bubble{
+    margin: 0px;
+    display: inline-block;
+    vertical-align: center;
+    width:450px;
+    height:450px;
+    /*border: 1px solid red;*/
+}
+.bubble span{
+    /*margin-right: 20px;*/
+    position: relative; 
+    top:10px; 
+    color: #707070;
+    font-size: 20px;
+    /*height: 100%;*/
+    /*writing-mode: vertical-lr;*/
+}
+
+.title{
+    margin: 0px;
+    width: 100%;
+    height:100px;
+    line-height: 100px;
+    border-bottom: 1px #ccc solid;
+    color: #707070;
+    /*border: 1px solid red;*/
+}
+
+.p02 .bar{
+/*    border: 1px solid red;*/
+    width: 100%;
+    height: 250px;
+    border-bottom: 1px #ccc solid;
+}
+.p02 .bar div{
+    position: relative; 
+    top:10px; 
+    color: #707070;
+    font-size: 20px;
+}
+.p02 #text{
+    width: 100%;
+    height: 175px;
+}
+
+#message {
+    border-radius: 2px;
+    font-size: 12px;
+    /*height: 80%;*/
+    position: absolute;
+    /*border: 1px solid red;*/
+    left: 30px;
+    z-index: 10;
+    visibility: hidden;
+    line-height:12px;
+    background:#77A989;
+    color: #ffffff;
+}
+table{
+    /*border: 1px solid blue;*/
+    /*height: 80%;*/
+}
+td{
+    padding: 2px;
+    position: relative;
+    height: 22px;
+}
+
+.head{
+    font-size: 20px;
+    border: 1px solid white;
+}
+
+#button {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+}
+
+.button { 
+    margin-right: 20px;
+  color: #FFFFFF; 
+  font-size: 16px;
+  height: 30px;
+  background-color: #2BABD9; 
+  border-color: #025A69; 
+} 
+ 
+.button:hover, 
+.button:focus, 
+.button:active, 
+.button.active, 
+.open .dropdown-toggle.button { 
+  color: #FFFFFF; 
+  background-color: #5AD63C; 
+  border-color: #025A69; 
+} 
+ 
+.button:active, 
+.button.active, 
+.open .dropdown-toggle.button { 
+  background-image: none; 
+} 
+ 
+.button.disabled, 
+.button[disabled], 
+fieldset[disabled] .button, 
+.button.disabled:hover, 
+.button[disabled]:hover, 
+fieldset[disabled] .button:hover, 
+.button.disabled:focus, 
+.button[disabled]:focus, 
+fieldset[disabled] .button:focus, 
+.button.disabled:active, 
+.button[disabled]:active, 
+fieldset[disabled] .button:active, 
+.button.disabled.active, 
+.button[disabled].active, 
+fieldset[disabled] .button.active { 
+  background-color: #2BABD9; 
+  border-color: #025A69; 
+} 
+ 
+.button .badge { 
+  color: #2BABD9; 
+  background-color: #FFFFFF; 
+}
+/*svg{
+    border: 1px solid red;
+}*/
+

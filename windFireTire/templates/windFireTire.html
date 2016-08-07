@@ -1,0 +1,94 @@
+{% load staticfiles %}
+
+<!doctype html>
+<html>
+<head>
+<title>Foodie Broker - 食客風火輪</title>
+<!-- for-mobile-apps -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta name="keywords" content="Data Pricing Tables Responsive, Login form web template, Sign up Web Templates, Flat Web Templates, Login signup Responsive web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
+<!-- //for-mobile-apps -->
+<link href='//fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href="{% static "css/jquery.flipster.css"%}" rel="stylesheet" >
+<link href="{% static "css/style2.css"%}"              rel="stylesheet" type="text/css" media="all" />
+<script src="{% static "js/jquery-2.1.4.min.js"%}"></script>
+</head>
+<body>
+<div class="content" id="Main-Content">
+	<!-- <h1>Page Rank 風火輪</h1> -->
+<!-- Flipster List -->	
+		<div class="flipster">
+			<ul>
+			{% for user in bigUserList    %} 
+			<!-- users  users2 user10s   dondon dondon2  users_vegetable_food  users_vegetable_food2-->
+				<li>
+			  		<div class="pricing">
+						<div class="pricing-top  {% cycle 'green-top' '' 'yellow-top' 'blue-top'  %}">
+							<a href="https://ifoodie.tw/user/{{user.field_id}}"  target="_blank"><h3>{{user.display_name}}</h3></a>
+							<p>Rank : {{forloop.counter}}</p>
+						</div>
+						<div class="pricing-bottom">
+							<div class="pricing-bottom-top">
+								<img src="{{user.profile_pic_origin}}">
+								
+							</div>
+							<div class="pricing-bottom-bottom">
+								<a href="/windFireTire/{{category}}/page_rank">
+                                                                                                        <p><span>Page Rank Score</span> {{user.page_rank}}</p>
+                                                                                                    </a>
+                                                                                                    <a href="/windFireTire/{{category}}/follower_cnt">
+                                                                                                        <p><span>擁有粉絲數 </span>{{user.follower_cnt}}</p>                
+                                                                                                    </a>
+                                                                                                    <a href="/windFireTire/{{category}}/post_cnt">
+                                                                                                        <p><span>文章總數 </span>{{user.post_cnt}}</p>                
+                                                                                                    </a>
+                                                                                                    <a href="/windFireTire/{{category}}/avgBrowse_cnt">                             
+                                                                                                        <p><span>文章平均瀏覽數</span> {{user.browse_cnt_divide_post_cnt}}</p>
+                                                                                                    </a>
+                                                                                                    <a href="/windFireTire/{{category}}/categoryTotol">
+								    <p><span>{{categoryNameCh}}文章篇數</span>
+								{{user.blog_cnt_by_this_category}}
+								</p>
+                                                                                                    </a>
+
+                                                                                                    <script>
+                                                                                                        console.log({{smllDic2|safe}});
+                                                                                                    </script>
+
+							
+							</div>
+							<div class="buy-button">
+								<a href="/userInfomation/{{user.field_id}}" target="_blank" >戰力分析</a>
+							</div>
+
+						</div>
+					</div>
+		  		</li>
+			{%endfor%}  		
+			</ul>
+		</div>
+		<div class="container text-center" >
+			<br>
+			<div class="buy-button">
+				<a href="/index/#Clusting" class="btn btn-primary btn-xl page-scroll" >重新選擇餐廳分類</a>
+			</div>
+		</div>
+
+		<div class="copyright">
+			<p class="footer">&copy; Foodie Spotlight . All Rights Reserved.</p>
+		</div>
+<!-- End Flipster List -->
+</div>
+<script src="{% static "js/jquery.flipster.js"%}"></script>
+<script>
+<!--
+
+	$(function(){ $(".flipster").flipster({ style: 'carousel', start: 0 }); });
+
+-->
+</script>
+
+</body>
+</html>
