@@ -18,3 +18,18 @@ def error404(request):
     response.status_code = 404
     return response
 
+def test_map(request):
+    response = render_to_response('test_map.html',context_instance=RequestContext(request))
+    return response
+
+def kardi_cloud_status(request):
+    response = render_to_response('kardi_cloud_status.html',context_instance=RequestContext(request))
+    return response
+
+def kardi_cloud_record(request):
+    response = render_to_response('kardi_cloud_record.html',context_instance=RequestContext(request))
+    return response
+
+def kardi_cloud_travel(request):
+    response = render_to_response('kardi_cloud_travel.html',context_instance=RequestContext(request))
+    return response

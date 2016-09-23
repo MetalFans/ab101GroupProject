@@ -1,0 +1,32 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="">
+		<script src="{% static "js/jquery.js" %}"></script>
+		<!-- <script src="http://echarts.baidu.com/build/dist/echarts.js"></script> -->
+		<script src="{% static "js/echarts.min.js" %}"></script>
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=visualization&sensor=true_or_false"></script>
+		<script src="{% static "js/kardi_cloud_map.js" %}"></script>
+		<link rel="stylesheet" href="{% static "css/kardi_cloud_status.css" %}">
+		<title>Kardi Cloud</title>
+	</head>
+	<body onload="locate()">
+		<div class='nav'><img height="100%" src="{% static "img/nav.jpg" %}"></div>
+		<div class='container'>
+			<div class='nav_side'><img width="100%" src="{% static "img/nav_side.jpg" %}"></div
+			><div class='canvas_space'>
+				<div id="border" class='canvas'></div
+				><div id="empty" class='canvas'></div
+				><div id="canvas" class='canvas'></div
+				><div class='map'></div>
+		</div>
+		<script src="{% static "js/kardi_cloud_bar.js" %}"></script>
+		<script type="text/javascript">
+		drawBar1();
+		drawBar2();
+		drawBar3();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,26 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="">
+		<script src="{% static "js/jquery.js" %}"></script>
+		<!-- <script src="http://echarts.baidu.com/build/dist/echarts.js"></script> -->
+		<script src="{% static "js/echarts.min.js" %}"></script>
+		<link rel="stylesheet" href="{% static "css/kardi_cloud_record.css" %}"  >
+		<title>Kardi Cloud</title>
+	</head>
+	<body>
+		<div class='nav'><img height="100%" src="{% static "img/nav.jpg" %}"></div>
+		<div class='container'>
+			<div class='nav_side'><img width="100%" src="{% static "img/nav_side_record.jpg" %}"></div
+			><div class='canvas_space'>
+				<div class='tag'><img height="100%" src="{% static "img/tag.jpg" %}"></div
+				><div class='canvas'></div
+				><div class='map'></div>
+			</div>
+		</div>
+		<script src="{% static "js/kardi_cloud_line.js" %}"></script>
+		<script type="text/javascript">drawLine();</script>
+	</body>
+</html>

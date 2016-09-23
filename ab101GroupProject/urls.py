@@ -29,6 +29,10 @@ urlpatterns = [
     url(r'^index/?$', include('indexHome.urls')),
     url(r'^foodieDetail/', include('foodieDetail.urls')),
     url(r'^userInfomation/', include('userInfomation.urls')),
+    url(r'^test_map', views.test_map),
+    url(r'^kardi_cloud_status', views.kardi_cloud_status),
+    url(r'^kardi_cloud_record', views.kardi_cloud_record),
+    url(r'^kardi_cloud_travel', views.kardi_cloud_travel),
     url(r'^.+$', views.error404),
     url(r'^$', include('indexHome.urls')),
 ]
