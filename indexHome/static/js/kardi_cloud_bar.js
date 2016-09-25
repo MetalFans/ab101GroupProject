@@ -15,24 +15,13 @@ var colorList = ['rgba(240,139,51,0.8)','rgba(215,84,4,0.8)','rgba(193,64,61,0.8
 'rgba(141,47,35,0.8)','rgba(163,88,109,0.8)','rgba(86,30,24,0.8)','rgba(92,74,114,0.8)'
 ];
 
-function drawBar1(type, target, label, value, unit, max){
+function drawBar1(type, target, value, label, unit, max){
     if (type===undefined){type='id'};
     if (target===undefined){target='border'};
     if (label===undefined){label=input_label};
     if (value===undefined){value=input_value};
     if (unit===undefined){unit=input_unit};
     if (max===undefined){max=input_value_max};
-    var input_value_normalized = label.map(function (e, i) {
-        var tmp_v = value[i]/max[i] * 100;
-        return tmp_v;
-    });
-    var reversed_value = input_value_normalized.map(function (e, i){
-        return 100-e;
-    });
-    var input_title = label.map(function (e, i) {
-        // return label[i] + '\n' + value[i] + ' ' + unit[i];
-        return value[i] + ' ' + unit[i];
-    });
     var input_max = label.map(function (e, i) {
         // return label[i] + '\n' + value[i] + ' ' + unit[i];
         return input_value_max[i] + ' ' + unit[i];
@@ -75,7 +64,7 @@ function drawBar1(type, target, label, value, unit, max){
                         {
                             type : 'category',
                             show: false,
-                            data : input_label
+                            data : label
                         }
                     ],
                     yAxis : [
@@ -149,88 +138,72 @@ function drawBar1(type, target, label, value, unit, max){
             myChart.setOption(option); 
 }
 
-function drawBar2(type, target,label, value, unit, max){
+function drawBar2(type, target, label){
     if (type===undefined){type='id'};
     if (target===undefined){target='empty'};
-    if (label===undefined){label=input_label};
-    if (value===undefined){value=input_value};
-    if (unit===undefined){unit=input_unit};
-    if (max===undefined){max=input_value_max};
-    var input_value_normalized = label.map(function (e, i) {
-        var tmp_v = value[i]/max[i] * 100;
-        return tmp_v;
-    });
-    var reversed_value = input_value_normalized.map(function (e, i){
-        return 100-e;
-    });
-    var input_title = label.map(function (e, i) {
-        // return label[i] + '\n' + value[i] + ' ' + unit[i];
-        return value[i] + ' ' + unit[i];
-    });
-            // Initialize after dom ready
-            if (type=='class') {
-                var myChart = echarts.init(document.getElementsByClassName(target)[0]); 
-            }else if(type=='id'){
-                var myChart = echarts.init(document.getElementById(target));
-            }else{
-                console.log('Type is not define.');
-            }
-            var option = {
-                    animation: false,    
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                        }
-                    },
-                    grid: {
-                        borderWidth:0,
-                        top:'12%',
-                        bottom:'12%',
-                        left:'0%',
-                        right:'0%'
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            show: false,
-                            data : input_value_max
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type : 'value',
-                            show: false,
-                            min: 0,
-                            max: 100
+    if (label===undefined){max=input_label};
+    if (type=='class') {
+        var myChart = echarts.init(document.getElementsByClassName(target)[0]); 
+    }else if(type=='id'){
+        var myChart = echarts.init(document.getElementById(target));
+    }else{
+        console.log('Type is not define.');
+    }
+    var option = {
+            animation: false,    
+            tooltip : {
+                trigger: 'axis',
+                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            grid: {
+                borderWidth:0,
+                top:'12%',
+                bottom:'12%',
+                left:'0%',
+                right:'0%'
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    show: false,
+                    data : label
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value',
+                    show: false,
+                    min: 0,
+                    max: 100
 
-                        }
-                    ],
-                    series : [
-                        {
-                            // barGap:'40%',
-                            type:'bar',
-                            stack:'total',
-                            barWidth:'69%',
-                            itemStyle: {
-                                normal: {
-                                    barBorderRadius:6,
-                                    // barBorderWidth:6,
-                                    // barBorderColor: 'tomato',
-                                    color: 'rgba(255,255,255,0.7)'
-                                } 
-                            },
-                            // data:reversed_value
-                            // data:[100,100,100,100,100,100,100,100,100,100]
-                            data:[100,100,100,100,100,100,100,100]
-                        },
-                    ]
-                };
-            // Load data into the ECharts instance 
-            myChart.setOption(option); 
+                }
+            ],
+            series : [
+                {
+                    // barGap:'40%',
+                    type:'bar',
+                    stack:'total',
+                    barWidth:'69%',
+                    itemStyle: {
+                        normal: {
+                            barBorderRadius:6,
+                            // barBorderWidth:6,
+                            // barBorderColor: 'tomato',
+                            color: 'rgba(255,255,255,0.7)'
+                        } 
+                    },
+                    // data:reversed_value
+                    // data:[100,100,100,100,100,100,100,100,100,100]
+                    data:[100,100,100,100,100,100,100,100]
+                },
+            ]
+        };
+    myChart.setOption(option); 
 }
 
-function drawBar3(type, target,label, value, unit, max){
+function drawBar3(type, target, value, label, unit, max){
     if (type===undefined){type='id'};
     if (target===undefined){target='canvas'};
     if (label===undefined){label=input_label};

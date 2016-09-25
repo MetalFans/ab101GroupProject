@@ -281,7 +281,7 @@ function locate(type, target, marker_path, lat_lng) {
         console.log('Type is not define.');
     }
 	var marker = new google.maps.Marker({
-		// title: "I'm here.",
+		title: "車輛最後位置",
 		icon: new google.maps.MarkerImage(marker_path),
 		position: new google.maps.LatLng(lat_lng[0], lat_lng[1]),
 		animation: google.maps.Animation.DROP,

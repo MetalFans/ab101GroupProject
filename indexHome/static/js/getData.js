@@ -43,8 +43,19 @@ function extractPathAndDate(json, adj){
     return {travelPath: tmpPathList, timeRecord: tmpTimeList, carRecord: tmpCarList};
 };
 
-$(document).ready(function(){
-	travelInput = extractPathAndDate(travelJson, true);
-	console.log(travelInput);
-	console.log(carStatusJson);
-});
+function extractData(json){
+	var dateList = [];
+	var data1 = [];
+	var data2 = [];
+	$.each(json, function(idx, e){
+		dateList.push(new Date(e[0]).customFormat('#YYYY#/#MM#/#DD#'));
+		data1.push(parseFloat(e[1]).toFixed(2));
+		data2.push(parseFloat(e[2]).toFixed(2));
+	});
+	return {date: dateList, d1: data1, d2: data2};
+}
+// console.log(extractData(speedLine));
+// $(document).ready(function(){
+	// travelInput = extractPathAndDate(travelJson, true);
+	// console.log(carStatusJson);
+// });

@@ -1,7 +1,7 @@
 function heredoc(fn) {
     return fn.toString().split('\n').slice(1,-1).join('\n') + '\n'
 };
-var styleText = heredoc(function(){/*
+var carStyleText = heredoc(function(){/*
 	html, body{
 	    margin: 0px;
 	    padding: 0px;
@@ -14,7 +14,7 @@ var styleText = heredoc(function(){/*
 	}
  */});
 
-var scriptText = heredoc(function(){/*
+var carScriptText = heredoc(function(){/*
 	$(document).ready(function() {
 		locate('class', 'location_map', '/Users/fan/anaconda/bin/Django/ab101GroupProject/indexHome/static/img/markers/CarMarker.png');
 		drawBar1('id', 'bar_border');
@@ -23,12 +23,12 @@ var scriptText = heredoc(function(){/*
 	})
  */});
 
-$(document).ready(function() {
+function createCarStatus(tag) {
 	$('<div>').attr('class', 'otherinfo').css({
 		'position': 'absolute',
 		'height': '5%',
 		'width': '100%',
-	}).appendTo('.subcontent');
+	}).appendTo(tag);
 	$.each(['累積里程數：'+carStatusJson['all_total_mileage'].toFixed(0)+' km',
 	 		'油耗狀態：'+carStatusJson['avg_fuel_store'].toFixed(2)+' km/L',
 	  		'資料更新時間：'+ new Date(carStatusJson['event_time']).customFormat('#YYYY#/#MM#/#DD# #hhhh#:#mm#:#ss#')
@@ -47,14 +47,14 @@ $(document).ready(function() {
 			'top' :'5%',
 			'height': '50%',
 			'width': '100%',
-		}).appendTo('.subcontent');
+		}).appendTo(tag);
 	});
 	$('<div>').attr('class', 'location_map').css({
 		'position': 'absolute',
 		'top': '55%',
 		'height': '45%',
 		'width': '100%',
-	}).appendTo('.subcontent');
-	$('<style>').html(styleText).appendTo('body');
-	$('<script>').html(scriptText).appendTo('body');
-});
+	}).appendTo(tag);
+	$('<style>').html(carStyleText).appendTo('body');
+	$('<script>').html(carScriptText).appendTo('body');
+};

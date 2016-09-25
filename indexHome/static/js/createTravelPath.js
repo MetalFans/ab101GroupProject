@@ -1,7 +1,7 @@
 function heredoc(fn) {
     return fn.toString().split('\n').slice(1,-1).join('\n') + '\n'
 };
-var styleText = heredoc(function(){/*
+var travelStyleText = heredoc(function(){/*
 	html, body{
 	    margin: 0px;
 	    padding: 0px;
@@ -20,20 +20,20 @@ var styleText = heredoc(function(){/*
 	}
  */});
 
-var scriptText = heredoc(function(){/*
+var travelScriptText = heredoc(function(){/*
 	$(document).ready(function() {
 		var infoBubble = '/Users/fan/anaconda/bin/Django/ab101GroupProject/indexHome/static/img/chat_bubble_green.png';
 		var carMarker = '/Users/fan/anaconda/bin/Django/ab101GroupProject/indexHome/static/img/markers/CarMarker.png';
-		initialize('class',targetList=['travel_speed','travel_rpm','travel_fuel','travel_map'],travelInput, infoBubble, carMarker);
+		initialize('class',targetList=['travel_speed','travel_rpm','travel_fuel','travel_map'],extractPathAndDate(travelJson, true), infoBubble, carMarker);
 	})
  */});
 
-$(document).ready(function() {
+function createTravelPath(tag){
 	$('<div>').attr('class','travel_map').css({
 		'height': '100%',
 		'width': '50%',
 		'display': 'inline-block',
-	}).appendTo('.subcontent');
+	}).appendTo(tag);
 	$('<div>').attr('class','travel_dynamic_data').css({
 		'margin':'0px',
 		'background': '#2c2c2c',
@@ -41,7 +41,7 @@ $(document).ready(function() {
 		'width': '49%',
 		'border-left': '1px solid #eee',
 		'display': 'inline-block',
-	}).appendTo('.subcontent');
+	}).appendTo(tag);
 	var topAdj = 0
 	$.each(['travel_speed','travel_rpm','travel_fuel'], function(idx, e){
 		$('<div>').attr('class',e).css({
@@ -52,6 +52,6 @@ $(document).ready(function() {
 		}).appendTo('.travel_dynamic_data');
 		topAdj += 100/3;
 	});
-	$('<style>').html(styleText).appendTo('body');
-	$('<script>').html(scriptText).appendTo('body');
-});
+	$('<style>').html(travelStyleText).appendTo('body');
+	$('<script>').html(travelScriptText).appendTo('body');
+}
