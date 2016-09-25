@@ -8,17 +8,19 @@ String.prototype.format = String.prototype.f = function() {
     return s;
 };
 var unit = ['km/h', 'RPM', 'km/L'];
-function initialize(type, targetList,label, value, rpmMax, fuelAverage) {
+function initialize(type, targetList, record, infoBubble, carMarker, shift,fuelAverage,label, value, rpmMax) {
+	travelData = record['carRecord'];
 	if (type===undefined){type='class'};
     if (targetList===undefined){targetList=['speed','rpm','fuel','map']};
     if (label===undefined){label=nameList};
     if (value===undefined){value=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]};
     if (rpmMax===undefined){rpmMax=6000};
     if (fuelAverage===undefined){fuelAverage=10};
+    if (shift===undefined){shift=false};
 	dynamicCanvas(type, targetList,label, value, rpmMax, fuelAverage);
 	var centerlatlng = new google.maps.LatLng(25.061441,121.550885);
 	var myOptions = {
-		zoom: 15,
+		zoom: 13,
 		center: centerlatlng,
 		mapTypeId: google.maps.MapTypeId.ROADMAP,
 		styles:[
@@ -286,58 +288,18 @@ function initialize(type, targetList,label, value, rpmMax, fuelAverage) {
 			]
 	};
 	var map = new google.maps.Map(select(type, targetList[3]), myOptions);
-	var img = new google.maps.MarkerImage('/static/img/markers/CarMarker.png');
-	var path_list = [	{lat:25.061441, lng: 121.550885},
-						{lat:25.061558, lng: 121.551872},
-						{lat:25.061869, lng: 121.553347},
-						{lat:25.061947, lng: 121.554806},
-						{lat:25.062024, lng: 121.555622},
-						{lat:25.061986, lng: 121.556566},
-						{lat:25.062141, lng: 121.557682},
-						{lat:25.062413, lng: 121.559055},
-						{lat:25.062452, lng: 121.560814},
-						{lat:25.062608, lng: 121.56240},
-						{lat:25.061441, lng: 121.550885},
-						{lat:25.061558, lng: 121.551872},
-						{lat:25.061869, lng: 121.553347},
-						{lat:25.061947, lng: 121.554806},
-						{lat:25.062024, lng: 121.555622},
-						{lat:25.061986, lng: 121.556566},
-						{lat:25.062141, lng: 121.557682},
-						{lat:25.062413, lng: 121.559055},
-						{lat:25.062452, lng: 121.560814},
-						{lat:25.062608, lng: 121.56240},
-						{lat:25.061441, lng: 121.550885},
-						{lat:25.061558, lng: 121.551872},
-						{lat:25.061869, lng: 121.553347},
-						{lat:25.061947, lng: 121.554806},
-						{lat:25.062024, lng: 121.555622},
-						{lat:25.061986, lng: 121.556566},
-						{lat:25.062141, lng: 121.557682},
-						{lat:25.062413, lng: 121.559055},
-						{lat:25.062452, lng: 121.560814},
-						{lat:25.062608, lng: 121.56240},
-						{lat:25.061441, lng: 121.550885},
-						{lat:25.061558, lng: 121.551872},
-						{lat:25.061869, lng: 121.553347},
-						{lat:25.061947, lng: 121.554806},
-						{lat:25.062024, lng: 121.555622},
-						{lat:25.061986, lng: 121.556566},
-						{lat:25.062141, lng: 121.557682},
-						{lat:25.062413, lng: 121.559055},
-						{lat:25.062452, lng: 121.560814},
-						{lat:25.062608, lng: 121.56240}];
+	var img = new google.maps.MarkerImage(carMarker);
+	var path_list = record['travelPath'];
 	var n = path_list.length;
 	var count = 0;	
 	var markers = [];
 	var marker = new google.maps.Marker({
-		title: "I'm here.",
+		// title: "I'm here.",
 		icon: img,
 		id: count
 	});
-	var infodiv = '<div id=\"info\" style=\"height:120px;width:130px;\"><div style=\"position:relative;text-align:left;top:25%;margin-top:10%;margin-left:13%;color:#444;font-weight:bold;\">{0}</div></div>';
+	var infodiv = '<div id=\"info\" style=\"height:120px;width:130px;\"><div style=\"position:relative;text-align:left;top:40%;margin-top:10%;margin-left:22%;color:#444;font-weight:bold;\">{0}</div></div>';
 	var infowindow = new google.maps.InfoWindow({
-		pixelOffset: new google.maps.Size(0, 0),
 		content: 'Hi'
 	});
 	var interval = setInterval(function (){
@@ -347,6 +309,7 @@ function initialize(type, targetList,label, value, rpmMax, fuelAverage) {
 		var line = new google.maps.Polyline({
 			path: path,
 			strokeColor: '#f4ed71',
+			strokeWeight: 5,
 		});	
 		if (count > 0) markers[count-1].setMap(null);
 		marker.setOptions({position:latlng, id: count});
@@ -355,17 +318,15 @@ function initialize(type, targetList,label, value, rpmMax, fuelAverage) {
 		marker.setMap(map);
 		count ++;
 		if (count >= n) clearInterval(interval);
-		// var newData = createValue(1)[0];
-		// var oldData = option.series[0].data;
 		var oldAxis = optionList[0].xAxis[0].data;
 		var content = '';
-        if (typeof oldAxis.slice(-1)[0] == 'number'){
+        if (oldAxis.slice(-1)[0].includes(':') && shift){
         	$.each(nameList, function(idx, item){
-        		var axisData = optionList[idx].xAxis[0].data.slice(-1)[0]+1;
+        		// var axisData = optionList[idx].xAxis[0].data.slice(-1)[0]+1;
         		optionList[idx].xAxis[0].data.shift();
-        		optionList[idx].xAxis[0].data.push(axisData);
+        		optionList[idx].xAxis[0].data.push(record['timeRecord'][count-1]);
         		optionList[idx].series[0].data.shift();
-        		var tmp = createValue(1, item)[0];
+        		var tmp = travelData[count-1][variableList[idx]];
         		if (content.length == 0){
         			content += item + ': ' + tmp + ' ' + unit[idx];
         		}else{
@@ -378,18 +339,10 @@ function initialize(type, targetList,label, value, rpmMax, fuelAverage) {
         		optionList[idx].series[0].name = item;
         		canvas[idx].setOption(optionList[idx]);
         	});
-   //      	var axisData = oldAxis.slice(-1)[0]+1;
-   //      	oldAxis.shift();
-   //      	oldAxis.push(axisData);
-			// oldData.shift();
-			// oldData.push(newData);
-			// option.series[0].animation = true;
         } else {
-        	// oldAxis[count-1] = count;
-        	// oldData[count-1] = newData;
         	$.each(nameList, function(idx, item){
-        		optionList[idx].xAxis[0].data[count-1] = count;
-        		var tmp = createValue(1, item)[0];
+        		optionList[idx].xAxis[0].data[count-1] = record['timeRecord'][count-1];
+        		var tmp = travelData[count-1][variableList[idx]];
         		if (content.length == 0){
         			content += item + ': ' + tmp  + ' ' + unit[idx];
         		}else{
@@ -405,12 +358,12 @@ function initialize(type, targetList,label, value, rpmMax, fuelAverage) {
         infowindow.open(map, marker);
 		$( ".gm-style-iw" ).prev().children('*:nth-child(4)').css({
 			// 'background-color':'#86A0D7',
-			'top':'15px',
+			'top':'30px',
 			'background-color':'rgba(0,0,0,0)',
-			'background': "url\(\"/static/img/chat_bubble_green.png\"\)",
+			'background': "url\(\"" + infoBubble + "\"\)",
         	'background-size': '70%',
         	'background-position': 'center',
-        	'background-repeat': 'no-repeat'
+        	'background-repeat': 'no-repeat',
 			}
 		);
 		$( ".gm-style-iw" ).prev().children('*:nth-child(2)').css({
@@ -424,5 +377,5 @@ function initialize(type, targetList,label, value, rpmMax, fuelAverage) {
 			'height':'0px',
 			'background-color':'rgba(0,0,0,0)'
 		});
-	}, 100);
+	}, 500);
 }

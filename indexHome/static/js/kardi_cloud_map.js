@@ -1,6 +1,6 @@
-var latlng = [25.032800, 121.533000];
+var latlng = [carStatusJson['event_lat'], carStatusJson['event_lon']];
 var path = '/static/img/markers/CarMarker.png';
-function locate(type, target, lat_lng, marker_path) {
+function locate(type, target, marker_path, lat_lng) {
 	if(type===undefined){type='class'};
 	if(target===undefined){target='map'};
 	if(lat_lng===undefined){lat_lng=latlng};
@@ -281,7 +281,7 @@ function locate(type, target, lat_lng, marker_path) {
         console.log('Type is not define.');
     }
 	var marker = new google.maps.Marker({
-		title: "I'm here.",
+		// title: "I'm here.",
 		icon: new google.maps.MarkerImage(marker_path),
 		position: new google.maps.LatLng(lat_lng[0], lat_lng[1]),
 		animation: google.maps.Animation.DROP,

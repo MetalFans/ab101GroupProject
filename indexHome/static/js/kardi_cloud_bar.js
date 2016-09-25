@@ -1,26 +1,21 @@
-// var input_label = ['里程數','油耗狀態','電瓶狀態','引擎負載狀態','水箱溫度','燃油壓力','引擎轉速','進氣岐管壓力','進氣溫度','空氣流量'];
-// var input_value = [100, 10, 10, 32, 130, 100, 1000, 60, 50, 30];
-// var input_unit = ['km', 'km/L', 'V', '%', '°C', 'kPa', 'rpm', 'kPa', '°C', 'g/s'];
-// var input_value_max = [1000, 25, 16, 100, 130, 300, 7000, 300, 60, 300];
-
-// var colorList = [
-//   'rgba(89,67,70,0.8)','rgba(33,32,39,0.8)','rgba(215,84,4,0.8)','rgba(141,47,35,0.8)','rgba(240,139,51,0.8)',
-//    'rgba(163,88,109,0.8)','rgba(92,74,114,0.8)','rgba(86,30,24,0.8)','rgba(193,64,61,0.8)','rgba(138,44,2,0.8)'
-// ];
-
 var input_label = ['電瓶狀態','引擎負載狀態','水箱溫度','燃油壓力','引擎轉速','進氣岐管壓力','進氣溫度','空氣流量'];
-var input_value = [10, 32, 130, 100, 1000, 60, 50, 30];
+var input_value = [carStatusJson['battery_voltage'],
+                carStatusJson['engine_load'].toFixed(2),
+                carStatusJson['coolant'],
+                carStatusJson['fuel_pressure'],
+                carStatusJson['rpm'],
+                carStatusJson['im_pressure'],
+                carStatusJson['intake_air_t'],
+                carStatusJson['airflow']];
 var input_unit = ['V', '%', '°C', 'kPa', 'rpm', 'kPa', '°C', 'g/s'];
-var input_value_max = [16, 100, 130, 300, 7000, 300, 60, 300];
+var input_value_max = [16, 100, 215, 765, 7000, 255, 215, 300];
 var mileage = 500;
 var last_fuel = 10;
-// 1,2,4,7,5,3,6,8
 var colorList = ['rgba(240,139,51,0.8)','rgba(215,84,4,0.8)','rgba(193,64,61,0.8)','rgba(138,44,2,0.8)',
 'rgba(141,47,35,0.8)','rgba(163,88,109,0.8)','rgba(86,30,24,0.8)','rgba(92,74,114,0.8)'
 ];
 
-
-function drawBar1(type, target,label, value, unit, max){
+function drawBar1(type, target, label, value, unit, max){
     if (type===undefined){type='id'};
     if (target===undefined){target='border'};
     if (label===undefined){label=input_label};
@@ -298,6 +293,7 @@ function drawBar3(type, target,label, value, unit, max){
                             // barGap:'40%',
                             type:'bar',
                             barWidth:'70%',
+                            barMinHeight: 15,
                             stack:'total',
                             itemStyle: {normal: {
                                 barBorderRadius:6,
@@ -307,7 +303,6 @@ function drawBar3(type, target,label, value, unit, max){
                                 label: {
                                     show: true,
                                     position: 'insideTop',
-                                    // position: 'bottom',
                                     formatter: '{b}'
                                 }
                             }},

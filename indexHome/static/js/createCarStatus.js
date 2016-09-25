@@ -16,7 +16,7 @@ var styleText = heredoc(function(){/*
 
 var scriptText = heredoc(function(){/*
 	$(document).ready(function() {
-		locate('class', 'location_map');
+		locate('class', 'location_map', '/Users/fan/anaconda/bin/Django/ab101GroupProject/indexHome/static/img/markers/CarMarker.png');
 		drawBar1('id', 'bar_border');
 		drawBar2('id', 'bar_blank');
 		drawBar3('id', 'bar_content');
@@ -29,20 +29,18 @@ $(document).ready(function() {
 		'height': '5%',
 		'width': '100%',
 	}).appendTo('.subcontent');
-	$('<span>').attr('class', 'vipinfo').css({
-		'margin-right':'2%',
-		'padding':'5px',
-		'box-shadow': '1px 1px 2px 0 rgba(0, 0, 0, 0.2), 2px 2px 5px 0 rgba(0, 0, 0, 0.19)',
-		'background': '#ddd',
-		'color': '#333',
-	}).html('累積里程數：200 km').appendTo('.otherinfo');
-	$('<span>').attr('class', 'vipinfo').css({
-		'margin-right':'5%',
-		'padding':'5px',
-		'box-shadow': '1px 1px 2px 0 rgba(0, 0, 0, 0.2), 2px 2px 5px 0 rgba(0, 0, 0, 0.19)',
-		'background': '#ddd',
-		'color': '#333',
-	}).html('油耗狀態：10 km/L').appendTo('.otherinfo');
+	$.each(['累積里程數：'+carStatusJson['all_total_mileage'].toFixed(0)+' km',
+	 		'油耗狀態：'+carStatusJson['avg_fuel_store'].toFixed(2)+' km/L',
+	  		'資料更新時間：'+ new Date(carStatusJson['event_time']).customFormat('#YYYY#/#MM#/#DD# #hhhh#:#mm#:#ss#')
+		],function(idx,e){
+			$('<span>').attr('class', 'vipinfo').css({
+				'margin-right':'2%',
+				'padding':'5px',
+				'box-shadow': '1px 1px 2px 0 rgba(0, 0, 0, 0.2), 2px 2px 5px 0 rgba(0, 0, 0, 0.19)',
+				'background': '#ddd',
+				'color': '#333',
+			}).html(e).appendTo('.otherinfo');
+	})
 	$.each(['bar_border','bar_blank','bar_content'], function(idx, e){
 		$('<div>').attr({'class':'bar_canvas', 'id':e}).css({
 			'position': 'absolute',
@@ -52,7 +50,7 @@ $(document).ready(function() {
 		}).appendTo('.subcontent');
 	});
 	$('<div>').attr('class', 'location_map').css({
-		'position': 'relative',
+		'position': 'absolute',
 		'top': '55%',
 		'height': '45%',
 		'width': '100%',
