@@ -22,16 +22,16 @@ var carScriptText = heredoc(function(){/*
 		drawBar3('id', 'bar_content');
 	})
  */});
-
-function createCarStatus(tag) {
+function createCarStatus(tag, json) {
+	if (json===undefined){json=carStatusJson};
 	$('<div>').attr('class', 'otherinfo').css({
 		'position': 'absolute',
 		'height': '5%',
 		'width': '100%',
 	}).appendTo(tag);
-	$.each(['累積里程數：'+carStatusJson['all_total_mileage'].toFixed(0)+' km',
-	 		'油耗狀態：'+carStatusJson['avg_fuel_store'].toFixed(2)+' km/L',
-	  		'資料更新時間：'+ new Date(carStatusJson['event_time']).customFormat('#YYYY#/#MM#/#DD# #hhhh#:#mm#:#ss#')
+	$.each(['累積里程數：'+json['all_total_mileage'].toFixed(0)+' km',
+	 		'油耗狀態：'+json['avg_fuel_store'].toFixed(2)+' km/L',
+	  		'資料更新時間：'+ new Date(json['event_time']).customFormat('#YYYY#/#MM#/#DD# #hhhh#:#mm#:#ss#')
 		],function(idx,e){
 			$('<span>').attr('class', 'vipinfo').css({
 				'margin-right':'2%',
